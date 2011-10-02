@@ -24,13 +24,23 @@ def write_csv(filename, table):
     with open(filename + ".csv", "wb") as f:
         csv.writer(f).writerows(table)
 
+def csv_to_txt(filename, new_folder):
+    table = read_csv(filename)
+    for j, header in enumerate(table[0]):
+        with open(new_folder + header + EXTENSION, 'wb') as f:
+            f.write("\n".join([row[j] for row in table[1:] if j < len(row)]))
+
+def read_csv(filename):
+    with open(filename + ".csv", "r") as f:
+        return [line for line in csv.reader(f)]
+
 # Add a number of columns to the table based on a list of file-conversion dict pairs
 # and a function for processing lines in the file
 def add_columns(table, folder, files, linefunc=None):
     [add_column(table, folder, filename, conversion, linefunc)
         for filename, conversion in files]
 
-def add_column(table, folder, filename, conversion, linefunc=None):
+def add_column(table, folder, filename, conversion=None, linefunc=None, separator=None):
     table[0].append(filename)
     with open(folder + "/" + filename + EXTENSION) as f:
         # extract the data from the file
@@ -44,5 +54,13 @@ def add_column(table, folder, filename, conversion, linefunc=None):
         # convert the data from a number to a word if necessary
         if conversion != None:
             entry = conversion[int(entry)]
-        table[i+1].append(entry)
+        # if there are multiple columns to be added, split the data into columns
+        if separator != None:
+            entry = entry.split(separator)
+        else:
+            entry = [entry]
+        # if this is the first column, add an extra row for the data if necessary
+        if len(table) <= i+1:
+            table.append([])
+        table[i+1] += entry
 

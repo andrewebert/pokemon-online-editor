@@ -3,7 +3,6 @@
 # There are abilities listed for pokemon with numbers 650-667, but no pokemon
 # with those numbers. This data is stored in extra_abilities.csv.
 
-import csv
 import os
 import glob
 from util import *
@@ -95,7 +94,7 @@ def get_table(tables, filename):
 #   attack, 43
 #   ...
 #   5G_level_moves, move1, move2, move3
-def to_csv(generation):
+def to_csv(generation="5G"):
     # Clear the excess data files and number replacement files
     for filename in EXCESS_FILES:
         with open("pokemon/" + EXCESS + filename + EXTENSION, "w") as f:
@@ -169,34 +168,34 @@ def to_csv(generation):
         name = table[1][1]
         write_csv("pokemon/" + name, table)
 
-def from_csv(generation):
+def from_csv(generation="5G"):
     tables = {}
     pokemon = set()
     for filename in glob.glob(os.path.join("pokemon/", "*.csv")):
-        print filename
-        with open(filename, 'r') as f:
-            table = csv.reader(f)
-            number = table.next()[1]
-            pokemon.add(number)
-            for line in table:
-                label = line[0]
-                data = line[1:]
-                # Create the table for the label if it doens't already exist
-                if not label in tables:
-                    tables[label] = {}
+        print "reading", filename
+        # read_csv adds the .csv extension, so we need to remove it from filename
+        table = read_csv(filename[:-4])
+        number = table[0][1]
+        pokemon.add(number)
+        for line in table[1:]:
+            label = line[0]
+            data = line[1:]
+            # Create the table for the label if it doens't already exist
+            if not label in tables:
+                tables[label] = {}
 
-                # Modify the data to get it back to its original format
-                if "poke_type" in label:
-                    data = str(invert_dict(type_names2)[data[0]])
-                elif "poke_ability" in label:
-                    data = str(invert_dict(ability_names)[data[0]])
-                elif "moves" in label or "combinations" in label:
-                    data = " ".join([str(invert_dict(move_names)[e]) for e in data])
-                else:
-                    # Default data format is a single element
-                    data = str(data[0])
+            # Modify the data to get it back to its original format
+            if "poke_type" in label:
+                data = str(invert_dict(type_names2)[data[0]])
+            elif "poke_ability" in label:
+                data = str(invert_dict(ability_names)[data[0]])
+            elif "moves" in label or "combinations" in label:
+                data = " ".join([str(invert_dict(move_names)[e]) for e in data])
+            else:
+                # Default data format is a single element
+                data = str(data[0])
 
-                tables[label][number] = data
+            tables[label][number] = data
     
     # Gets the stats of all pokemon, condensing them into a string
     # Ignore alternate formes which don't have separate stats listed

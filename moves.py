@@ -48,7 +48,7 @@ FILES = [
     ("padding2",        None)
 ]
 
-def to_csv(generation):
+def to_csv(generation="5G"):
     # Get the names of all the moves
     with open(MOVES + "moves.txt") as f:
         table = [["id", "name"]] + [[i, name] for i, name in enumerate(lines(f))]
@@ -61,10 +61,8 @@ def to_csv(generation):
     # Write the table to a csv file
     write_csv("moves/moves", table)
 
-def from_csv(generation):
-    with open("moves/moves.csv", "r") as f:
-        typesReader = csv.reader(f)
-        table = [line for line in typesReader]
+def from_csv(generation="5G"):
+    table = read_csv("moves/moves")
 
     # Get the conversion dictionaries
     conversions = dict(FILES)

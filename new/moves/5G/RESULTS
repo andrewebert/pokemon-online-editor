@@ -1,0 +1,129 @@
+===accuracy.txt===
+===category.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===caused_effect.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===crit_rate.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===damage_class.txt===
+===effect_chance.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===effect.txt===
+17c17
+< is doubled if opponent is using Fly or Bounce.
+---
+>  is doubled if opponent is using Fly or Bounce.
+560c560
+< Increases if used after Cross Fire.
+\ No newline at end of file
+---
+> Increases if used after Cross Fire.
+===flags.txt===
+560c560
+< 72
+\ No newline at end of file
+---
+> 72
+===flinch_chance.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===healing.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===max_turns.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===min_turns.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===None0.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===None1.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===None2.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===padding0.txt===
+560c560
+< 83
+\ No newline at end of file
+---
+> 83
+===padding1.txt===
+560c560
+< 83
+\ No newline at end of file
+---
+> 83
+===padding2.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===power.txt===
+===pp.txt===
+===priority.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===range.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===recoil.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===status.txt===
+560c560
+< 0
+\ No newline at end of file
+---
+> 0
+===type.txt===
