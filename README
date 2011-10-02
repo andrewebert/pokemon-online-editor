@@ -1,0 +1,7 @@
+    python to_csv.py
+Creates a number of csv files in subfolders.
+
+    python from_csv.py
+Converts the csv files back into text files in new/
+The folders in this directory can be copied over bin/db
+to implement the changes.
