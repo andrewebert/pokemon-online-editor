@@ -14,6 +14,7 @@ NUMBER_REPLACE = {"01:0":"1:0","02:0":"2:0","03:0":"3:0","04:0":"4:0",
 MAX_POKEMON_NUMBER = 649
 EXCESS = "ex_"
 EXCESS_FILES = ["poke_ability1_5G", "poke_ability2_5G", "poke_ability3_5G"]
+DYNAMICPUNCH = 223
 
 STAT_LABELS = ["hp", "attack", "defense", "special attack", 
     "special defense", "speed"]
@@ -57,34 +58,32 @@ def second(s):
     return s.split(" ")[1]
 
 def add_entry(tables, folder, filename, conversion):
-    with open(folder + filename + EXTENSION) as f:
-        for line in lines(f):
-            (no, _, entry) = line.partition(" ")
-            # For some reason poke_weight lists the pokemon numbers incorrectly.
-            if filename in ERRONEOUS_FILES:
-                if no in NUMBER_REPLACE:
-                    no = NUMBER_REPLACE[no]
-            # The 5G ability files give abilities to unnumbered pokemon, and miss some
-            # alternate formes. I don't know what's going on here. Abilities for
-            # unknown pokemon are placed in excess data files and copied back when
-            # the csvs are converted to txt files.
-            if int(no.split(':')[0]) > MAX_POKEMON_NUMBER:
-                with open("pokemon/" + EXCESS + filename + EXTENSION, 'a') as ex_f:
-                    ex_f.write(line + "\n")
-            else:
-                # Perform the conversion if necessary
-                if conversion != None:
-                    entry = conversion[int(entry)]
-                # Add the label and data
-                tables[no].append([filename, entry])
+    for line in lines(folder + filename + EXTENSION):
+        (no, _, entry) = line.partition(" ")
+        # For some reason poke_weight lists the pokemon numbers incorrectly.
+        if filename in ERRONEOUS_FILES:
+            if no in NUMBER_REPLACE:
+                no = NUMBER_REPLACE[no]
+        # The 5G ability files give abilities to unnumbered pokemon, and miss some
+        # alternate formes. I don't know what's going on here. Abilities for
+        # unknown pokemon are placed in excess data files and copied back when
+        # the csvs are converted to txt files.
+        if int(no.split(':')[0]) > MAX_POKEMON_NUMBER:
+            with open("pokemon/" + EXCESS + filename + EXTENSION, 'a') as ex_f:
+                ex_f.write(line + "\n")
+        else:
+            # Perform the conversion if necessary
+            if conversion != None:
+                entry = conversion[int(entry)]
+            # Add the label and data
+            tables[no].append([filename, entry])
 
 def get_table(tables, filename):
-    with open(POKEMON + filename + EXTENSION) as f:
-        for line in lines(f):
-            data = line.split(" ")
-            table = tables[data[0]]
-            data = data[1:]
-            yield (table, data)
+    for line in lines(POKEMON + filename + EXTENSION):
+        data = line.split(" ")
+        table = tables[data[0]]
+        data = data[1:]
+        yield (table, data)
 
 # Format
 # Bulbasaur.csv:
@@ -104,19 +103,18 @@ def to_csv(generation="5G"):
 
     tables = {}
 
-    with open(POKEMON + "pokemons.txt") as f:
-        for line in lines(f):
-            (number, _, name) = line.partition(" ")
-            # Ignore any annotation after the sub-number (e.g. H for arceus)
-            numbers = number.split(":")
-            if len(numbers) > 2:
-                new_number = numbers[0] + ":" + numbers[1]
-                # If we've changed the pokemon number, make a note of it
-                with open("pokemon/number_replacements.txt", "a") as f:
-                    f.write(new_number + " " + number + "\n")
-            else:
-                new_number = number
-            tables[new_number] = [["no", new_number], ["pokemons", name]]
+    for line in lines(POKEMON + "pokemons.txt"):
+        (number, _, name) = line.partition(" ")
+        # Ignore any annotation after the sub-number (e.g. H for arceus)
+        numbers = number.split(":")
+        if len(numbers) > 2:
+            new_number = numbers[0] + ":" + numbers[1]
+            # If we've changed the pokemon number, make a note of it
+            with open("pokemon/number_replacements.txt", "a") as f:
+                f.write(new_number + " " + number + "\n")
+        else:
+            new_number = number
+        tables[new_number] = [["no", new_number], ["pokemons", name]]
     
     # Add the types and abilities
     for filename, conversion in get_type_files(generation)\
@@ -135,7 +133,11 @@ def to_csv(generation="5G"):
     # Each file represents a row in the table of that pokemon
     for filename in moves_files:
         for (table, data) in get_table(tables, filename):
-            table.append([filename] + [move_names[int(move)] for move in data])
+            table.append([filename] + [move_names[int(move)] 
+                # I want to remove DynamicPunch from everyone but
+                # No Guard users, so I remove it from everyone then
+                # manually add it to Mach*, Golurk, Golett
+                for move in data if int(move) != DYNAMICPUNCH])
 
     # Move combinations (| separated)
     for filename in COMBINATIONS_FILES:
@@ -147,7 +149,11 @@ def to_csv(generation="5G"):
             # numbers.
             for i, entry in enumerate(data.split("|")):
                 table.append([filename + "_" + str(i)] + 
-                    [move_names[int(move)] for move in entry.split(" ")])
+                    [move_names[int(move)] for move in entry.split(" ")
+                        # I want to remove DynamicPunch from everyone but
+                        # No Guard users, so I remove it from everyone then
+                        # manually add it to Mach*, Golurk, Golett
+                        if int(move) != DYNAMICPUNCH])
 
     # Add irrelevant crap
     reverse_generation = {"1G":"G1", "2G":"G2", "3G":"G3", "4G":"G4", "5G":"G5"}[generation]

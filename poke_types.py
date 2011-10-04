@@ -6,25 +6,24 @@ NEW_FOLDER = "new/types/"
 
 def to_csv(generation="5G"):
     # read type names
-    with open(TYPES + 'types.txt') as f:
-        types = lines(f)
+    types = lines(TYPES + 'types.txt')
 
     # read type effectiveness, put it into table format
     # [["",    type1, type2],
     #  [type1, 1,     2    ],
     #  [type2, 4,     2    ]]
-    with open(TYPES + 'typestable.txt') as f:
-        headers = [""] + types
-        # effectiveness is a 2d array
-        effectiveness = [line.split(" ") for line in lines(f)]
+    headers = [""] + types
+    # effectiveness is a 2d array
+    effectiveness = [line.split(" ") 
+        for line in lines(TYPES + 'typestable.txt')]
 
-        table = [headers] +\
-            [[types[attacker]] +\
-                [effectiveness[attacker][defender]
-                    for defender in range(len(effectiveness[attacker]))]
-                        for attacker in range(len(effectiveness))]
+    table = [headers] +\
+        [[types[attacker]] +\
+            [effectiveness[attacker][defender]
+                for defender in range(len(effectiveness[attacker]))]
+                    for attacker in range(len(effectiveness))]
 
-        #print table
+    #print table
 
     # write the type effectiveness to a csv
     write_csv("types/types", table)
