@@ -8,12 +8,12 @@ def flatten(ls):
 def invert_dict(d):
     return dict(zip(d.values(), d.keys()))
 
-def lines(f):
-    return [str(line).strip() for line in f]
+def lines(filename):
+    with open(filename) as f:
+        return [str(line).strip() for line in f]
 
 def lines_dict(filename):
-    with open(filename + EXTENSION) as f:
-        return dict(enumerate(lines(f)))
+    return dict(enumerate(lines(filename + EXTENSION)))
 
 # Get the names of all the types from the types folder
 type_names = lines_dict("../types/types")
@@ -24,15 +24,17 @@ def write_csv(filename, table):
     with open(filename + ".csv", "wb") as f:
         csv.writer(f).writerows(table)
 
-def csv_to_txt(filename, new_folder):
-    table = read_csv(filename)
-    for j, header in enumerate(table[0]):
-        with open(new_folder + header + EXTENSION, 'wb') as f:
-            f.write("\n".join([row[j] for row in table[1:] if j < len(row)]))
-
 def read_csv(filename):
     with open(filename + ".csv", "r") as f:
         return [line for line in csv.reader(f)]
+
+def csv_to_txt(filename, new_folder):
+    write_txt(new_folder, read_csv(filename))
+
+def write_txt(new_folder, table):
+    for j, header in enumerate(table[0]):
+        with open(new_folder + header + EXTENSION, 'wb') as f:
+            f.write("\n".join([row[j] for row in table[1:] if j < len(row)]))
 
 # Add a number of columns to the table based on a list of file-conversion dict pairs
 # and a function for processing lines in the file
@@ -42,9 +44,8 @@ def add_columns(table, folder, files, linefunc=None):
 
 def add_column(table, folder, filename, conversion=None, linefunc=None, separator=None):
     table[0].append(filename)
-    with open(folder + "/" + filename + EXTENSION) as f:
-        # extract the data from the file
-        column = lines(f)
+    # extract the data from the file
+    column = lines(folder + "/" + filename + EXTENSION)
     for i in range(len(column)):
         # if the data needs to be extracted from the line
         # (e.g. pokemon number removed), do so
