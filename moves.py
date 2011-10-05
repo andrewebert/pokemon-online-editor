@@ -161,7 +161,9 @@ def from_csv(generation="5G"):
     s = headers.index("flags")
     flags = [row[s:] for row in data]
     flags = [str(sum([invert_dict(flag_names)[f] 
-        for f in row])) 
+        # Ignore empy flags, which really shouldn't be in the CSV
+        # but sometimes are anyway
+        for f in row if f != ""])) 
         for row in flags]
     
     with open(new_folder + "flags.txt", "wb") as f:

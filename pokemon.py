@@ -25,7 +25,7 @@ COMBINATIONS_FILES = [kind + gen
         # There's no legal_combinations_1G.txt file
         if not (kind == "legal_combinations_" and gen == "1G")]
 
-type_names2 = type_names
+type_names2 = type_names.copy()
 type_names2[17] = ""
 
 # Sorts a list of pokemon numbers, represented as strings
