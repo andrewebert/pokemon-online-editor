@@ -1,1 +1,7 @@
-cp -r new/* ../
+#!/bin/sh
+
+cp -r new/abilities/* ../abilities/
+cp -r new/items/* ../items/
+cp -r new/moves/* ../moves/
+cp -r new/pokemon/* ../pokes/
+cp -r new/types/* ../types/
